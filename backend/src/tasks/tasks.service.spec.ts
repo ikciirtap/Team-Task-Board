@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { Test } from '@nestjs/testing';
 import { TasksService } from './tasks.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -32,7 +33,9 @@ describe('TasksService', () => {
       create: jest.fn().mockResolvedValue(mockTask),
       findMany: jest.fn().mockResolvedValue([mockTask]),
       findUnique: jest.fn().mockResolvedValue(mockTask),
-      update: jest.fn().mockResolvedValue({ ...mockTask, status: TaskStatus.IN_PROGRESS }),
+      update: jest
+        .fn()
+        .mockResolvedValue({ ...mockTask, status: TaskStatus.IN_PROGRESS }),
       delete: jest.fn().mockResolvedValue(mockTask),
     },
   };
@@ -62,7 +65,7 @@ describe('TasksService', () => {
       const result = await service.create(dto);
 
       expect(result).toEqual(mockTask);
-      expect(prisma.task.create).toHaveBeenCalledWith({
+      expect(prisma.task.create as jest.Mock).toHaveBeenCalledWith({
         data: dto,
         include: { assignee: true },
       });
@@ -74,13 +77,13 @@ describe('TasksService', () => {
       const result = await service.findAll();
 
       expect(result).toEqual([mockTask]);
-      expect(prisma.task.findMany).toHaveBeenCalled();
+      expect(prisma.task.findMany as jest.Mock).toHaveBeenCalled();
     });
 
     it('should filter tasks by status', async () => {
       await service.findAll({ status: TaskStatus.TODO });
 
-      expect(prisma.task.findMany).toHaveBeenCalledWith({
+      expect(prisma.task.findMany as jest.Mock).toHaveBeenCalledWith({
         where: { status: TaskStatus.TODO },
         include: { assignee: true },
         orderBy: { createdAt: 'desc' },
@@ -119,7 +122,7 @@ describe('TasksService', () => {
       const result = await service.remove('task-1');
 
       expect(result).toEqual(mockTask);
-      expect(prisma.task.delete).toHaveBeenCalledWith({
+      expect(prisma.task.delete as jest.Mock).toHaveBeenCalledWith({
         where: { id: 'task-1' },
       });
     });

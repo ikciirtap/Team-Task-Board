@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
@@ -19,7 +20,7 @@ export class TasksService {
 
   async findAll(filterDto?: FilterTaskDto) {
     const { status, assigneeId, search } = filterDto || {};
-    const where: any = {};
+    const where: Prisma.TaskWhereInput = {};
 
     if (status) {
       where.status = status;
